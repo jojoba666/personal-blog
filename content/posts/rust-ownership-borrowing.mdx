@@ -1,0 +1,145 @@
+---
+title: "从零开始学 Rust — 所有权与借用"
+slug: "rust-ownership-borrowing"
+date: "2026-06-25"
+description: "Rust 最核心的概念：所有权（Ownership）和借用（Borrowing）。用直观的例子理解为什么 Rust 不需要垃圾回收器。"
+tags:
+  - rust
+  - systems-programming
+  - memory
+category: "backend"
+toc: true
+---
+
+## 为什么 Rust 不需要 GC？
+
+Rust 最让我震撼的设计是：**它在编译时就解决了内存安全问题**。没有运行时垃圾回收器，没有引用计数，全靠编译器的借用检查器（Borrow Checker）。
+
+核心三个规则：
+
+1. Rust 中的每一个值都有一个被称为**所有者**（owner）的变量
+2. 值在任一时刻有且只有一个所有者
+3. 当所有者离开作用域，值将被丢弃
+
+## 所有权（Ownership）
+
+```rust
+fn main() {
+    let s1 = String::from("hello");
+    let s2 = s1;  // s1 的所有权转移给 s2
+    
+    // println!("{}", s1);  // ❌ 编译错误！s1 已经失效
+    println!("{}", s2);     // ✅ 正确
+}
+```
+
+这就是 **move 语义**——所有权像接力棒一样传递。
+
+## 借用（Borrowing）
+
+不想转移所有权？那就"借"：
+
+```rust
+fn main() {
+    let s = String::from("hello");
+    
+    let len = calculate_length(&s);  // 不可变借用
+    
+    println!("'{}' 的长度是 {}", s, len);  // s 仍然有效！
+}
+
+fn calculate_length(s: &String) -> usize {
+    s.len()
+}
+```
+
+### 可变借用
+
+同一时刻只能有一个可变引用：
+
+```rust
+fn main() {
+    let mut s = String::from("hello");
+    
+    change(&mut s);  // 可变借用
+    println!("{}", s);  // "hello world"
+}
+
+fn change(s: &mut String) {
+    s.push_str(" world");
+}
+```
+
+## 引用的规则（核心！）
+
+在任意给定时间：
+
+- **要么**有一个可变引用
+- **要么**有任意数量的不可变引用
+- 引用必须始终有效
+
+这从根本上消除了：
+- 数据竞争（data race）
+- 悬垂指针（dangling pointer）
+- use-after-free
+
+## 实际代码示例
+
+```rust
+// 这个函数编译不过 — 违反了借用规则
+fn invalid_borrow() {
+    let mut v = vec![1, 2, 3];
+    
+    let first = &v[0];  // 不可变借用
+    v.push(4);          // ❌ 可变借用！但 first 还在使用
+    println!("{}", first);
+}
+
+// 修复后
+fn valid_borrow() {
+    let mut v = vec![1, 2, 3];
+    
+    let first = v[0];   // 复制值（i32 是 Copy 类型）
+    v.push(4);          // ✅ 没问题
+    println!("{}", first);
+}
+```
+
+## 生命周期（Lifetime）
+
+引用必须有明确的生命周期：
+
+```rust
+// ❌ 编译错误：返回值引用了局部变量
+fn dangling() -> &String {
+    let s = String::from("hello");
+    &s  // s 在这里被丢弃！
+}
+
+// ✅ 正确：返回 String 本身（所有权转移）
+fn no_dangling() -> String {
+    let s = String::from("hello");
+    s
+}
+```
+
+## 总结
+
+Rust 的所有权系统看似严格，但它换来了：
+
+- **零成本抽象**：没有运行时开销
+- **内存安全**：编译时就保证
+- **无畏并发**：数据竞争根本不可能
+
+初学时会和编译器"打架"，但一旦理解，你会感谢它的严格。
+
+> Rust 不会让你写出完美的代码，但它会阻止你写出有内存 bug 的代码。
+
+## 下一步
+
+- 结构体与方法
+- 枚举和模式匹配
+- Trait 和泛型
+- 错误处理（Result/Option）
+
+等我学完更深入的部分再写第二篇！

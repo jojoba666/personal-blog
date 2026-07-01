@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #FF6B35;
+    --color-primary-hover: #e55a2b;
+    --color-primary-light: #fff0e8;
+    --color-primary-muted: #ffc4a3;
+    --color-accent-green: #2d6a4f;
+    --color-accent-yellow: #e9c46a;
+    --color-accent-blue: #457b9d;
+    --color-accent-red: #e76f51;
+    --color-bg: #faf8f5;
+    --color-surface: #f5f0eb;
+    --color-surface-hover: #ede6df;
+    --color-border: #e0d5c7;
+    --color-text-primary: #2c2416;
+    --color-text-secondary: #6b5e4f;
+    --color-text-muted: #9b8e7c;
+    --color-code-bg: #26211a;
+    --color-code-text: #e8dcc8;
+    --color-code-inline: #f0e6d3;
+  }
+
+  @font-face {
+    font-family: "Virgil";
+    src: url("/fonts/Virgil.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  body {
+    @apply bg-warm-bg text-warm-text font-body antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary-light text-primary;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+}
+
+@layer components {
+  /* ===== Prose 自定义样式 ===== */
+  .prose-hand {
+    @apply font-body text-base text-warm-text leading-relaxed;
+  }
+
+  .prose-hand h1 {
+    @apply font-hand text-3xl text-warm-text mt-12 mb-6;
+  }
+  .prose-hand h2 {
+    @apply font-hand text-2xl text-warm-text mt-10 mb-4 pb-1 border-b-2 border-primary-muted;
+  }
+  .prose-hand h3 {
+    @apply font-hand text-xl text-warm-text mt-8 mb-3;
+  }
+
+  .prose-hand p {
+    @apply mb-5 leading-relaxed;
+  }
+
+  .prose-hand a {
+    @apply text-primary underline decoration-primary-muted underline-offset-2
+           hover:decoration-primary transition-colors;
+  }
+
+  .prose-hand strong {
+    @apply font-semibold text-warm-text;
+  }
+
+  .prose-hand blockquote {
+    @apply border-l-4 border-primary-muted pl-5 my-6 italic text-warm-textSec
+           bg-surface py-3 pr-4 rounded-r-lg;
+  }
+
+  .prose-hand ul {
+    @apply list-disc list-outside ml-6 mb-5 space-y-2;
+  }
+  .prose-hand ol {
+    @apply list-decimal list-outside ml-6 mb-5 space-y-2;
+  }
+  .prose-hand li {
+    @apply leading-relaxed;
+  }
+
+  .prose-hand code {
+    @apply font-mono text-sm bg-code-inline text-primary px-1.5 py-0.5 rounded;
+  }
+
+  .prose-hand pre {
+    @apply font-mono text-sm bg-code-bg text-code-text rounded-lg p-5 my-6 overflow-x-auto
+           border border-warm-border;
+  }
+
+  .prose-hand pre code {
+    @apply bg-transparent text-code-text p-0 rounded-none;
+  }
+
+  .prose-hand img {
+    @apply rounded-lg border border-warm-border mx-auto my-8 max-w-full;
+  }
+
+  .prose-hand table {
+    @apply w-full border-collapse my-6 text-sm;
+  }
+
+  .prose-hand th {
+    @apply font-hand bg-surface border border-warm-border px-4 py-2 text-left;
+  }
+
+  .prose-hand td {
+    @apply border border-warm-border px-4 py-2;
+  }
+
+  .prose-hand hr {
+    @apply border-dashed border-warm-border my-10;
+  }
+
+  .prose-hand :not(pre) > code {
+    @apply bg-code-inline text-primary;
+  }
+}

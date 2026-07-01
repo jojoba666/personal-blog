@@ -1,0 +1,113 @@
+---
+title: "V8 引擎垃圾回收机制详解"
+slug: "v8-garbage-collection"
+date: "2026-06-20"
+description: "从 Scavenger 到 Orinoco，一文搞懂 V8 如何管理内存。包含分代假说、标记-清除-整理、并发与并行 GC 的完整流程。"
+tags:
+  - javascript
+  - v8
+  - memory-management
+  - browser
+category: "frontend"
+toc: true
+---
+
+## 为什么要了解 GC？
+
+作为前端开发者，我们每天都在写 JavaScript，但很少有人真正理解内存是如何被管理的。了解 V8 的垃圾回收机制，能帮你：
+
+- 避免内存泄漏
+- 写出更高效的代码
+- 理解为什么某些模式是"坏"的
+
+## 分代假说（The Generational Hypothesis）
+
+V8 的 GC 设计基于一个核心观察：**大多数对象死得很快，少数对象活得很久**。
+
+基于此，V8 将堆分为两代：
+
+### 新生代（Young Generation）
+
+- 大小：1-8 MB
+- 使用 **Scavenger**（清道夫）算法
+- 快速回收短命对象
+- 采用 Cheney 的**半空间复制**算法
+
+### 老生代（Old Generation）
+
+- 包含存活超过两次 GC 的对象
+- 使用 **Mark-Sweep-Compact** 算法
+- 回收慢但频率低
+
+```
+┌─────────────────────────────┐
+│         V8 Heap             │
+│  ┌───────────┐              │
+│  │ New Space │ ← Scavenger  │
+│  │ (1-8 MB)  │              │
+│  └───────────┘              │
+│  ┌───────────┐              │
+│  │ Old Space │ ← Mark-Sweep │
+│  │           │    -Compact  │
+│  └───────────┘              │
+└─────────────────────────────┘
+```
+
+## 三种垃圾回收器
+
+### 1. Scavenger（清道夫）
+
+新生代 GC，速度快但空间开销大：
+
+- 将新生代分为两个半空间：From 和 To
+- 活跃对象从 From 复制到 To
+- 清空 From 空间
+- 交换 From 和 To 的角色
+
+### 2. Major GC（全量 GC）
+
+处理老生代的 Mark-Sweep-Compact：
+
+- **标记（Mark）**: 从根对象出发，标记所有可达对象
+- **清除（Sweep）**: 回收未标记对象的内存
+- **整理（Compact）**: 移动对象消除内存碎片
+
+### 3. Orinoco — 并行与并发 GC
+
+V8 的 GC 代号 Orinoco 引入了：
+
+- **并行 GC**: 主线程和多个辅助线程同时工作
+- **增量标记**: 将标记分解为小块，穿插在 JS 执行之间
+- **并发标记**: 标记在后台线程运行，完全不阻塞主线程
+
+## 实际影响
+
+```javascript
+// ❌ 坏：频繁创建大对象
+function badPattern() {
+  for (let i = 0; i < 1000000; i++) {
+    const obj = { data: new Array(1000).fill(i) };
+    // obj 很快被回收，但 GC 压力大
+  }
+}
+
+// ✅ 好：复用对象
+function goodPattern() {
+  const obj = { data: new Array(1000) };
+  for (let i = 0; i < 1000000; i++) {
+    obj.data.fill(i);
+    // 复用同一个对象，减少 GC 压力
+  }
+}
+```
+
+## 总结
+
+1. 了解 GC 帮你写出性能更好的 JavaScript
+2. V8 分两代管理内存，新生代用 Scavenger，老生代用 Mark-Sweep-Compact
+3. Orinoco 通过并行化大幅减少了 GC 暂停时间
+4. 避免不必要的对象创建和内存泄漏是前端性能优化的关键
+
+> 你不是在写代码给计算机看，你是在写代码给 V8 的 GC 看。
+
+下一篇预告：V8 的隐藏类和内联缓存优化 🔥

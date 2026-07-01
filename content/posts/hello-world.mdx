@@ -1,0 +1,64 @@
+---
+title: "Hello World — 第一篇博客"
+slug: "hello-world"
+date: "2026-06-15"
+description: "这是我的第一篇博客文章。聊聊为什么要写博客，以及这个网站的设计理念。"
+tags:
+  - blog
+  - life
+category: "personal"
+toc: true
+---
+
+## 为什么要写博客？
+
+作为一个 CS 学生，我一直在吸收知识——看文档、读源码、刷教程。但**输出是最好的学习方式**。当你试图把一件事讲清楚，你会发现自己在哪些地方还没真正理解。
+
+这就是我开始写博客的原因。
+
+## 这个网站的设计
+
+我建这个博客的时候有几个原则：
+
+### 1. 手写字体，拒绝几何感
+
+Inter、DM Sans、system-ui 这些字体太"完美"了，太干净了。我想要一种**人味**。
+
+所以我用了 Virgil（一种手绘感英文字体）和马山正（中文手写体）。正文用 Caveat，看起来就像手写的笔记。
+
+### 2. 暖橙色调
+
+冷冰冰的黑白太严肃了。我选了 #FF6B35（暖橙）作为主色——像夕阳，像橙子，温暖但不刺眼。
+
+### 3. 极简技术栈
+
+不需要数据库。文章全部是 `.mdx` 文件，用 `gray-matter` 解析。评论用 Giscus（GitHub Discussions 驱动）。联系表单就是一个简单的 API Route。
+
+**零运维，纯静态，够用就好。**
+
+## 接下来
+
+我会在这里记录：
+
+- 前端技术学习笔记（React、Next.js、TypeScript）
+- 系统编程探索（Rust、Linux）
+- 一些项目总结和踩坑记录
+- 偶尔的生活碎碎念
+
+## 技术细节
+
+```javascript
+// 这个博客的技术栈
+const stack = {
+  framework: "Next.js 14",
+  styling: "Tailwind CSS",
+  content: "MDX",
+  comments: "Giscus",
+  deployment: "Vercel",
+  philosophy: "零运维，写好文章就够了"
+};
+```
+
+> 最好的代码是能用最简单的工具解决实际问题的代码。
+
+感谢你来看我的博客。如果有任何想法，欢迎在评论区留言 👇
