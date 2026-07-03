@@ -159,3 +159,4 @@ personal-blog/
 ├── tailwind.config.*   # Tailwind CSS config
 └── package.json        # Dependencies & scripts
 ```
+
